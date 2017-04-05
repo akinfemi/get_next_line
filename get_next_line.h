@@ -6,5 +6,9 @@
 # include <unistd.h>
 # include <stdlib.h>
 # define BUF_SIZE 10
+# include <string.h>
+# include "libft/libft.h"
+
+int		get_next_line(int fd, char **line);
 
 #endif

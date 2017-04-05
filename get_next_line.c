@@ -5,6 +5,13 @@ void		init(char **str)
 	*str = (char *)ft_memalloc(sizeof(char) * 1001);
 }
 
+int			check_fd(int fd)
+{
+	if (fd >= 0)
+		return (1);
+	return (0);
+}
+
 char		*read_next(const int fd, int buf_size)
 {
 	int		rd;
@@ -27,20 +34,19 @@ void		fill_line(char **line, char **str)
 	len = ft_strlen(*str) - ft_strlen(temp);
 	*line = (char *)ft_memalloc(sizeof(char) * len + 1);
 	*line = ft_strncpy(*line, *str, len);
-	*str = temp+1;
+	*str = temp + 1;
 }
 
 int			get_next_line(const int fd, char **line)
 {
 	static char	*str = NULL;
-	char	*nl;
-	char	*temp;
-   
-	if (!str)
+	char		*nl;
+	char		*temp;
+
+	if (!str && check_fd(fd))
 	{
 		init(&str);
-		temp = read_next(fd, BUF_SIZE);
-		if (!temp)
+		if (!(temp = read_next(fd, BUF_SIZE)))
 			return (0);
 		str = ft_strcpy(str, temp);
 	}
@@ -52,11 +58,10 @@ int			get_next_line(const int fd, char **line)
 	}
 	if (nl == NULL)
 	{
-		temp = read_next(fd, BUF_SIZE);
-		if (!temp)
+		if (!(temp = read_next(fd, BUF_SIZE)))
 			return (0);
 		str = ft_strcat(str, temp);
 		return (get_next_line(fd, line));
 	}
-	return (0);	
+	return (0);
 }
