@@ -17,7 +17,7 @@ t_gnl		*create_node(char *content, int fd)
 	t_gnl	*node;
 
 	node = (t_gnl *)malloc(sizeof(t_gnl));
-	node->content = (char *)ft_memalloc(sizeof(char) * 100000);
+	node->content = (char *)ft_memalloc(sizeof(char) * BUFF_SIZE + 1);
 	node->content = ft_strcpy(node->content, content);
 	node->fd = fd;
 	return (node);
@@ -58,12 +58,12 @@ int			fill_line(char **line, char **str)
 		len = ft_strlen(*str) - ft_strlen(temp);
 		*line = (char *)ft_memalloc(sizeof(char) * len + 1);
 		*line = ft_strncpy(*line, *str, len);
-		*str += len + 1;
+		ft_memmove(*str, *str + len + 1, ft_strlen(*str));
 	}
 	else
 	{
 		*line = ft_strdup(*str);
-		*str += ft_strlen(*str);
+		ft_bzero(*str, ft_strlen(*str));
 	}
 	return (1);
 }
@@ -82,9 +82,11 @@ int			get_next_line(const int fd, char **line)
 	while ((rd = read(fd, str, BUFF_SIZE)))
 	{
 		str[rd] = '\0';
-		temp->content = ft_strcat(temp->content, str);
-		ft_bzero(str, ft_strlen(str));
-		if ((nl = ft_strchr(temp->content, '\n')))
+
+		nl = temp->content;
+		temp->content = ft_strjoin(temp->content, str);
+		free(nl);
+		if ((ft_strchr(temp->content, '\n')))
 		{
 			fill_line(line, &(temp->content));
 			return (1);
@@ -95,6 +97,5 @@ int			get_next_line(const int fd, char **line)
 		fill_line(line, &(temp->content));
 		return (1);
 	}
-	free(temp);
 	return (0);
 }
