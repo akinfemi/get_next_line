@@ -82,20 +82,13 @@ int			get_next_line(const int fd, char **line)
 	while ((rd = read(fd, str, BUFF_SIZE)))
 	{
 		str[rd] = '\0';
-
 		nl = temp->content;
 		temp->content = ft_strjoin(temp->content, str);
 		free(nl);
 		if ((ft_strchr(temp->content, '\n')))
-		{
-			fill_line(line, &(temp->content));
-			return (1);
-		}
+			return(fill_line(line, &(temp->content)));
 	}
 	if (ft_strlen(temp->content) > 0)
-	{
-		fill_line(line, &(temp->content));
-		return (1);
-	}
+		return(fill_line(line, &(temp->content)));
 	return (0);
 }
