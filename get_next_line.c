@@ -6,7 +6,7 @@
 /*   By: aakin-al <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/06 15:22:41 by aakin-al          #+#    #+#             */
-/*   Updated: 2017/04/11 23:00:57 by aakin-al         ###   ########.fr       */
+/*   Updated: 2017/04/12 20:31:43 by aakin-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,8 @@ t_gnl		*create_node(char *content, int fd)
 	t_gnl	*node;
 
 	node = (t_gnl *)malloc(sizeof(t_gnl));
-//	node->content = (char *)ft_memalloc(sizeof(char) * BUFF_SIZE + 1);
-//	node->content = ft_strcpy(node->content, content);
-	node->content = content;
+	node->content = (char *)ft_memalloc(sizeof(char) * 100000);
+	node->content = ft_strcpy(node->content, content);
 	node->fd = fd;
 	return (node);
 }
@@ -74,19 +73,16 @@ int			get_next_line(const int fd, char **line)
 	static t_gnl	*list = NULL;
 	t_gnl			*temp;
 	char			*nl;
-//	char			str[BUFF_SIZE + 1];
-	char			*str;
-//	char			*ctemp;
+	char			str[BUFF_SIZE + 1];
+	int				rd;
 
-	str = (char *)ft_memalloc(sizeof(char) * (BUFF_SIZE + 1));
 	if (fd < 0 || BUFF_SIZE <= 0 || read(fd, str, 0) < 0 || !line)
 		return (-1);
 	temp = set_node(fd, &list);
-	while ((read(fd, str, BUFF_SIZE)))
+	while ((rd = read(fd, str, BUFF_SIZE)))
 	{
-//		ctemp = temp->content;
-		temp->content = ft_strjoin(temp->content, str);
-//		free(ctemp);
+		str[rd] = '\0';
+		temp->content = ft_strcat(temp->content, str);
 		ft_bzero(str, ft_strlen(str));
 		if ((nl = ft_strchr(temp->content, '\n')))
 		{
@@ -99,5 +95,6 @@ int			get_next_line(const int fd, char **line)
 		fill_line(line, &(temp->content));
 		return (1);
 	}
+	free(temp);
 	return (0);
 }
